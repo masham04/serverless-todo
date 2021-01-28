@@ -7,7 +7,7 @@ const index = () => {
   return (
     <Container>
       <Flex sx={{ flexDirection: "column", padding: 3 }}>
-        <Heading as="h1">ToDo App</Heading>
+        <Heading as="h1">TODO App</Heading>
         <Button
           sx={{ marginTop: 2 }}
           onClick={() => {
