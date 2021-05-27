@@ -83,9 +83,9 @@ const IndexPage = () => {
       {data.Todos.map((el, ind) => {
 
         return (
-          <Segment key={ind} className='lists' inverted style={{ width: '50%', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
-            <List divided inverted >
-              <List.Item>
+          <Segment className='lists' inverted style={{ width: '50%', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
+            <List inverted >
+              <List.Item key={ind}>
                 <List.Content>
                   <List.Header>{el.title}</List.Header>
                   <Button style={{ float: 'right' }} onClick={() => handleDelete(el.id)}>x</Button>
