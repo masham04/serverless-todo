@@ -1,35 +1,81 @@
 const { ApolloServer, gql } = require('apollo-server-lambda')
+var faunadb = require('faunadb');
+q = faunadb.query
 
 const typeDefs = gql`
   type Query {
-    hello: String
-    allAuthors: [Author!]
-    author(id: Int!): Author
-    authorByName(name: String!): Author
+    Todos: [Todo]!
   }
-  type Author {
+  type Mutation {
+    addTodo(title: String): Todo
+    deleteTodo(id: ID!): Todo
+  }
+  type Todo {
     id: ID!
-    name: String!
-    married: Boolean!
+    title: String!
   }
+  
 `
 
-const authors = [
-  { id: 1, name: 'Terry Pratchett', married: false },
-  { id: 2, name: 'Stephen King', married: true },
-  { id: 3, name: 'JK Rowling', married: false },
-]
+var adminClient = new faunadb.Client({ secret: 'fnAEKMzdaNACDajWP0oQiUXyxEQK8F_oJoaOz443' })
 
 const resolvers = {
   Query: {
-    hello: () => 'Hello, world!',
-    allAuthors: () => authors,
-    author: () => {},
-    authorByName: (root, args) => {
-      console.log('hihhihi', args.name)
-      return authors.find((author) => author.name === args.name) || 'NOTFOUND'
-    },
+    Todos: async () => {
+      try {
+
+        const result = await adminClient.query(
+          q.Map(
+            q.Paginate(q.Match(q.Index('title'))),
+            q.Lambda(x => q.Get(x))
+          )
+
+        )
+        return result.data.map((el) => {
+          return {
+            id: el.ref.id,
+            title: el.data.title,
+          }
+        })
+
+      } catch (error) {
+        console.log(error)
+      }
+    }
   },
+
+  Mutation: {
+    addTodo: async (_, { title }) => {
+      try {
+
+        const result = await adminClient.query(
+          q.Create(
+            q.Collection('todos'),
+            {
+              data: {
+                title
+              }
+            },
+          )
+        )
+        return result.data.ts
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    deleteTodo: async (_, { id }) => {
+
+      try {
+
+        const result = await adminClient.query(
+          q.Delete(q.Ref(q.Collection('todos'), id))
+        );
+        return result.data
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  }
 }
 
 const server = new ApolloServer({
