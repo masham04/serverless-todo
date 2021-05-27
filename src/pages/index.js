@@ -83,7 +83,7 @@ const IndexPage = () => {
       {data.Todos.map((el, ind) => {
 
         return (
-          <Segment key={ind} inverted style={{ width: '50%', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
+          <Segment key={ind} className='lists' inverted style={{ width: '50%', display: 'block', marginLeft: 'auto', marginRight: 'auto' }}>
             <List divided inverted >
               <List.Item>
                 <List.Content>
