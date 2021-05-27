@@ -39,8 +39,8 @@ const IndexPage = () => {
 
   if (loading) return <center style={{ marginTop: '40vh' }}>
     <Loader
-      type="Watch"
-      color="#00BFFF"
+      type="Oval"
+      color="black"
       height={100}
       width={100}
       timeout={3000} //3 secs
